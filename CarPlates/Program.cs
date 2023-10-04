@@ -17,10 +17,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost11395",
+    options.AddPolicy("AllowLocalhost4200",
         builder =>
         {
-            builder.WithOrigins("http://localhost:11395")
+            builder.WithOrigins("http://localhost:4200")
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("AllowLocalhost11395");
+app.UseCors("AllowLocalhost4200");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

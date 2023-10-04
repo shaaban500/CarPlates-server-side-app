@@ -86,7 +86,7 @@ namespace CarPlates.Controllers
 
 
 		[HttpDelete]
-		public async Task Delete(long id)
+		public async Task<IActionResult> Delete(long id)
 		{
 			var executedPlate = await _context.ExecutedPlates.FindAsync(id);
 
@@ -94,7 +94,10 @@ namespace CarPlates.Controllers
 			{
 				var removedPlate = _context.ExecutedPlates.Remove(executedPlate);
 				await _context.SaveChangesAsync();
+				return Ok();
 			}
+			
+			return BadRequest();
 		}
 
 	}
