@@ -25,5 +25,5 @@ jobs:
         run: dotnet build ./CarPlates.sln --configuration Release --no-restore
         
       - name: Publish
-        run: dotnet publish ./CarPlates.sln --configuration Release --no-build --output
+        run: dotnet publish ./CarPlates.sln --configuration Release --no-build --output ./publish
         
