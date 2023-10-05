@@ -22,20 +22,22 @@ namespace CarPlates.Controllers
             return Ok(carPlate);
         }
 
+
         [HttpPost("GetAll")]
         public async Task<IActionResult> GetAll([FromQuery] CarFilterModel model)
         {
-            model.CarTypeId = model.CarTypeId == 0 ? 1 : model.CarTypeId;
-            model.CarStateId = model.CarStateId == 0 ? 1 : model.CarStateId;
+            var carPlates = _context.CarPlates.Where(c => c.IsDeleted != true).AsQueryable();
 
-            var carPlates = _context.CarPlates
-                            .Where(x => x.IsDeleted != true &&
-                                        x.CarStateId == model.CarStateId &&
-                                        x.CarTypeId == model.CarTypeId)
-                            .Include(x => x.CarType)
-                            .Include(x => x.CarState)
-                            .ToList();
-            return Ok(carPlates);
+            carPlates = model.OwnerPhone is not null ? carPlates.Where(c => c.OwnerPhone == model.OwnerPhone) : carPlates;
+			carPlates = model.OwnerName is not null ? carPlates.Where(c => c.OwnerName == model.OwnerName) : carPlates;
+            carPlates = model.OwnerNationalId is not null ? carPlates.Where(c => c.OwnerNationalId == model.OwnerNationalId) : carPlates;
+            carPlates = model.Letters is not null ? carPlates.Where(c => c.Letters == model.Letters) : carPlates;
+			carPlates = model.Numbers is not null ? carPlates.Where(c => c.Numbers == model.Numbers) : carPlates;
+            carPlates = model.CarTypeId is not null ? carPlates.Where(c => c.CarTypeId == model.CarTypeId) : carPlates;
+            carPlates = model.CarStateId is not null ? carPlates.Where(c => c.CarStateId == model.CarStateId) : carPlates;
+            carPlates = carPlates.Include(c => c.CarType).Include(c => c.CarState);
+
+			return Ok(await carPlates.ToListAsync());
         }
 
 
