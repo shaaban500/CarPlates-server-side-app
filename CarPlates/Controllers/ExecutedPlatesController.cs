@@ -23,21 +23,20 @@ namespace CarPlates.Controllers
 		}
 
 		[HttpPost("GetAll")]
-		public async Task<IActionResult> GetAll([FromQuery] ExecutedPlateDto model)
+		public async Task<IActionResult> GetAll([FromQuery] CarFilterModel model)
 		{
-			model.CarTypeId = model.CarTypeId == 0 ? 1 : model.CarTypeId;
-			model.ExecutionNumber = model.ExecutionNumber == 0 ? 1 : model.ExecutionNumber;
-			model.ExecutionYear = model.ExecutionYear == 0 ? 1 : model.ExecutionYear;
+			var executedPlates = _context.ExecutedPlates.Where(c => c.IsDeleted != true).AsQueryable();
 
-			var executedPlates = _context.ExecutedPlates
-							.Where(x => x.IsDeleted != true &&
-										x.CarTypeId == model.CarTypeId &&
-										x.ExecutionYear == model.ExecutionYear &&
-										x.ExecutionNumber == model.ExecutionNumber)
-							.Include(x => x.CarType)
-							.ToList();
+			executedPlates = model.Letters is not null ? executedPlates.Where(c => c.Letters == model.Letters) : executedPlates;
+			executedPlates = model.Numbers is not null ? executedPlates.Where(c => c.Numbers == model.Numbers) : executedPlates;
+			executedPlates = model.CarTypeId is not null ? executedPlates.Where(c => c.CarTypeId == model.CarTypeId) : executedPlates;
+			executedPlates = model.Date is not null ? executedPlates.Where(c => c.Date == model.Date) : executedPlates;
+			executedPlates = model.ExecutionYear is not null ? executedPlates.Where(c => c.ExecutionYear == model.ExecutionYear) : executedPlates;
+			executedPlates = model.ExecutionNumber is not null ? executedPlates.Where(c => c.ExecutionNumber == model.ExecutionNumber) : executedPlates;
 
-			return Ok(executedPlates);
+			executedPlates = executedPlates.Include(c => c.CarType);
+
+			return Ok(await executedPlates.ToListAsync());
 		}
 
 
