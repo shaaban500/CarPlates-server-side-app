@@ -65,30 +65,38 @@ namespace CarPlates.Controllers
             }
             else
             {
-                var carPlate = await _context.CarPlates.FindAsync(model.Id);
-
-                if (carPlate is not null)
+                try
                 {
-                    carPlate.Id = model.Id;
-                    carPlate.Letters = model.Letters;
-                    carPlate.Numbers = model.Numbers;
-                    carPlate.OwnerName = model.OwnerName;
-                    carPlate.OwnerPhone = model.OwnerPhone;
-                    carPlate.OwnerAdress = model.OwnerAdress;
-                    carPlate.OwnerNationalId = model.OwnerNationalId;
-                    carPlate.CarStateId = model.CarStateId;
-                    carPlate.CarTypeId = model.CarTypeId;
-                    carPlate.Date = model.Date;
+                    var carPlate = await _context.CarPlates.FindAsync(model.Id);
 
-                    var updatedCarPlate = _context.CarPlates.Update(carPlate);
-                    await _context.SaveChangesAsync();
+                    if (carPlate is not null)
+                    {
+                        carPlate.Id = model.Id;
+                        carPlate.Letters = model.Letters;
+                        carPlate.Numbers = model.Numbers;
+                        carPlate.OwnerName = model.OwnerName;
+                        carPlate.OwnerPhone = model.OwnerPhone;
+                        carPlate.OwnerAdress = model.OwnerAdress;
+                        carPlate.OwnerNationalId = model.OwnerNationalId;
+                        carPlate.CarStateId = model.CarStateId;
+                        carPlate.CarTypeId = model.CarTypeId;
+                        carPlate.Date = model.Date;
 
-                    return Ok();
+                        var updatedCarPlate = _context.CarPlates.Update(carPlate);
+                        await _context.SaveChangesAsync();
+
+                        return Ok();
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
                 }
-                else
+                catch(Exception ex)
                 {
-                    return BadRequest();
+                    throw ex;
                 }
+
             }
         }
 
