@@ -3,8 +3,8 @@
 	public class CarFilterModel
 	{
 		// pagination
-		public int PageIndex { get; set; } = 1;
-		public int PageSize { get; set; } = 10;
+		public int PageIndex { get; set; }
+		public int PageSize { get; set; }
 
 		// filter
 		public long? CarTypeId { get; set; }

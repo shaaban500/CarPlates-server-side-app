@@ -13,5 +13,9 @@ namespace CarPlates.Models
 		public long CarTypeId { get; set ; }
 		[ForeignKey("CarTypeId")]
 		public CarType CarType { get; set; }
+
+		public long ExecutedCarStateId { get; set; }
+		[ForeignKey("ExecutedCarStateId")]
+		public ExecutedCarState ExecutedCarState { get; set; }
 	}
 }

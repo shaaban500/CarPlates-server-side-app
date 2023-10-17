@@ -8,9 +8,11 @@ namespace CarPlates.Models
         {
         }
 
-        public DbSet<CarPlate> CarPlates { get; set; }
+		public DbSet<CarType> CarTypes { get; set; }
         public DbSet<CarState> CarStates { get; set; }
-        public DbSet<CarType> CarTypes { get; set; }
+        public DbSet<CarPlate> CarPlates { get; set; }
+
+        public DbSet<ExecutedCarState> ExecutedCarStates { get; set; }
         public DbSet<ExecutedPlate> ExecutedPlates { get; set; }
 	}
 }
