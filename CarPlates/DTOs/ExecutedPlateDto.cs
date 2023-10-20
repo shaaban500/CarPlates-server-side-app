@@ -12,5 +12,6 @@ namespace CarPlates.DTOs
 		public int ExecutionNumber { get; set; }
 		public DateTime Date { get; set; }
 		public int CarTypeId { get; set; }
+		public int ExecutedCarStateId { get; set; }
 	}
 }

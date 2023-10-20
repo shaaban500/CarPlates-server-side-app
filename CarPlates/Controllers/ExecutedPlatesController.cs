@@ -23,18 +23,21 @@ namespace CarPlates.Controllers
 		}
 
 		[HttpPost("GetAll")]
-		public async Task<IActionResult> GetAll([FromQuery] CarFilterModel model)
+		public async Task<IActionResult> GetAll([FromBody] CarFilterModel model)
 		{
 			var executedPlates = _context.ExecutedPlates.Where(c => c.IsDeleted != true).AsQueryable();
 
-			executedPlates = model.Letters is not null ? executedPlates.Where(c => c.Letters == model.Letters) : executedPlates;
-			executedPlates = model.Numbers is not null ? executedPlates.Where(c => c.Numbers == model.Numbers) : executedPlates;
+			executedPlates = !string.IsNullOrWhiteSpace(model.Letters) && !string.IsNullOrEmpty(model.Letters) ? executedPlates.Where(c => c.Letters == model.Letters) : executedPlates;
+			executedPlates = !string.IsNullOrWhiteSpace(model.Numbers) && !string.IsNullOrEmpty(model.Numbers) ? executedPlates.Where(c => c.Numbers == model.Numbers) : executedPlates;
 			executedPlates = model.CarTypeId is not null ? executedPlates.Where(c => c.CarTypeId == model.CarTypeId) : executedPlates;
-			executedPlates = model.Date is not null ? executedPlates.Where(c => c.Date == model.Date) : executedPlates;
+			executedPlates = model.CarStateId is not null ? executedPlates.Where(c => c.ExecutedCarStateId == model.CarStateId) : executedPlates;
 			executedPlates = model.ExecutionYear is not null ? executedPlates.Where(c => c.ExecutionYear == model.ExecutionYear) : executedPlates;
 			executedPlates = model.ExecutionNumber is not null ? executedPlates.Where(c => c.ExecutionNumber == model.ExecutionNumber) : executedPlates;
+			
+			
+			executedPlates = executedPlates.Include(c => c.CarType).Include(c => c.ExecutedCarState);
 
-			executedPlates = executedPlates.Include(c => c.CarType);
+			executedPlates = executedPlates.Skip((model.PageIndex - 1) * model.PageSize).Take(model.PageSize);
 
 			return Ok(await executedPlates.ToListAsync());
 		}
@@ -53,6 +56,7 @@ namespace CarPlates.Controllers
 				executedPlate.CarTypeId = model.CarTypeId;
 				executedPlate.ExecutionYear = model.ExecutionYear;
 				executedPlate.ExecutionNumber = model.ExecutionNumber;
+				executedPlate.ExecutedCarStateId = model.ExecutedCarStateId;
 
 				var addedPlate = await _context.ExecutedPlates.AddAsync(executedPlate);
 				await _context.SaveChangesAsync();

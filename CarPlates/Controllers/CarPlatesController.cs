@@ -158,7 +158,7 @@ namespace CarPlates.Controllers
 
 
 
-
+			// last displayed row at the report showing the total for each state
 			sum = 0;
 			var totalCountsReport = new DailyReportDto
 			{
