@@ -1,4 +1,5 @@
 using CarPlates.Models;
+using CarPlates.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,9 @@ builder.Services.AddCors(options =>
                    .AllowAnyMethod();
         });
 });
+
+
+builder.Services.AddScoped<IDailyReportServices, DailyReportServices>();
 
 var app = builder.Build();
 
