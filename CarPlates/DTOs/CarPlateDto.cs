@@ -5,7 +5,7 @@ namespace CarPlates.DTOs
 {
     public class CarPlateDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string? Letters { get; set; }
         public string? Numbers { get; set; }
         public string? OwnerName { get; set; }
@@ -14,7 +14,7 @@ namespace CarPlates.DTOs
         public string? OwnerNationalId { get; set; }
         public DateTime? Date { get; set; }
 
-        public int CarTypeId { get; set; }
-        public int CarStateId { get; set; }
+        public long CarTypeId { get; set; }
+        public long CarStateId { get; set; }
     }
 }

@@ -70,10 +70,13 @@ namespace CarPlates.Controllers
 				if (plate is not null)
 				{
 					plate.Id = model.Id;
+					plate.Date = model.Date;
 					plate.Letters = model.Letters;
 					plate.Numbers = model.Numbers;
 					plate.CarTypeId = model.CarTypeId;
-					plate.Date = model.Date;
+					plate.ExecutionYear = model.ExecutionYear;
+					plate.ExecutionNumber = model.ExecutionNumber;
+					plate.ExecutedCarStateId = model.ExecutedCarStateId;
 
 					var updatedPlate = _context.ExecutedPlates.Update(plate);
 					await _context.SaveChangesAsync();
