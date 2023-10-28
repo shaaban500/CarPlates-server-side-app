@@ -1,4 +1,5 @@
 ﻿using CarPlates.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarPlates.Controllers
@@ -14,8 +15,9 @@ namespace CarPlates.Controllers
         }
 
 
+	[EnableCors("AllowSpecificOrigin")]
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
+		public async Task<IActionResult> GetAll()
         {
             var carTypes = _context.CarTypes.Where(st => st.IsDeleted != true);
             return Ok(carTypes);

@@ -1,6 +1,7 @@
 ﻿using CarPlates.DTOs;
 using CarPlates.Models;
 using CarPlates.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,7 @@ namespace CarPlates.Controllers
 		}
 
 
+		[EnableCors("AllowSpecificOrigin")]
 		[HttpGet("GetDailyReport")]
 		public async Task<IActionResult> GetDailyReport()
 		{

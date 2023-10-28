@@ -1,5 +1,6 @@
 ﻿using CarPlates.DTOs;
 using CarPlates.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ namespace CarPlates.Controllers
 			_context = context;
 		}
 
+	[EnableCors("AllowSpecificOrigin")]
 		[HttpGet("getById")]
 		public async Task<IActionResult> GetById(long id)
 		{
@@ -22,6 +24,7 @@ namespace CarPlates.Controllers
 			return Ok(carPlate);
 		}
 
+	[EnableCors("AllowSpecificOrigin")]
 		[HttpPost("GetAll")]
 		public async Task<IActionResult> GetAll([FromBody] CarFilterModel model)
 		{
@@ -43,9 +46,17 @@ namespace CarPlates.Controllers
 		}
 
 
+		[EnableCors("AllowSpecificOrigin")]
 		[HttpPost]
 		public async Task<IActionResult> AddOrEdit(ExecutedPlateDto model)
 		{
+			var isRepeatedPlate = _context.ExecutedPlates.Where(x => x.Letters == model.Letters && x.Numbers == model.Numbers && x.IsDeleted != true);
+
+			if (isRepeatedPlate != null)
+			{
+				return BadRequest();
+			}
+
 			if (model.Id == 0)
 			{
 				var executedPlate = new ExecutedPlate();
@@ -91,6 +102,7 @@ namespace CarPlates.Controllers
 		}
 
 
+	[EnableCors("AllowSpecificOrigin")]
 		[HttpDelete]
 		public async Task<IActionResult> Delete(long id)
 		{

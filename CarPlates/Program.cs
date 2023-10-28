@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -18,21 +17,20 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
+	options.AddPolicy("AllowSpecificOrigin", builder =>
+	{
+		builder
+			.WithOrigins("http://192.168.1.60:8080")
+			.AllowAnyMethod()
+			.AllowAnyHeader();
+	});
 });
-
 
 builder.Services.AddScoped<IDailyReportServices, DailyReportServices>();
 
 var app = builder.Build();
 
-app.UseCors();
+app.UseCors("AllowTheFuckingURL");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

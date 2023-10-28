@@ -1,5 +1,6 @@
 ﻿using CarPlates.DTOs;
 using CarPlates.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ namespace CarPlates.Controllers
 			_context = context;
 		}
 
+	[EnableCors("AllowSpecificOrigin")]
 		[HttpGet("getById")]
 		public async Task<IActionResult> GetById(long id)
 		{
@@ -23,6 +25,7 @@ namespace CarPlates.Controllers
 		}
 
 
+	[EnableCors("AllowSpecificOrigin")]
 		[HttpPost("GetAll")]
 		public async Task<IActionResult> GetAll([FromBody] CarFilterModel model)
 		{
@@ -43,9 +46,17 @@ namespace CarPlates.Controllers
 		}
 
 
+	[EnableCors("AllowSpecificOrigin")]
 		[HttpPost]
 		public async Task<IActionResult> AddOrEdit(CarPlateDto model)
 		{
+			var isRepeatedPlate = _context.CarPlates.Where(x => x.Letters == model.Letters && x.Numbers == model.Numbers && x.IsDeleted != true);
+
+			if(isRepeatedPlate != null)
+			{
+				return BadRequest();
+			}
+
 			if (model.Id == 0)
 			{
 				var carPlate = new CarPlate();
@@ -95,6 +106,7 @@ namespace CarPlates.Controllers
 		}
 
 
+		[EnableCors("AllowSpecificOrigin")]
 		[HttpDelete]
 		public async Task<IActionResult> Delete(long id)
 		{
@@ -108,98 +120,6 @@ namespace CarPlates.Controllers
 			}
 
 			return BadRequest();
-		}
-
-
-		[HttpGet("GetDailyReport")]
-		public async Task<IActionResult> GetDailyReport()
-		{
-			var carTypes = _context.CarTypes.ToList();
-			var carStates = _context.CarStates.ToList();
-			var executedCarStates = _context.ExecutedCarStates.ToList();
-
-			var allStates = new List<string>();
-			var dailyReportDto = new List<DailyReportDto>();
-
-			int sum = 0;
-
-			foreach (var type in carTypes)
-			{
-				sum = 0;
-				var report = new DailyReportDto
-				{
-					CarType = type.Type,
-					Counts = new List<int>()
-				};
-
-				foreach (var state in carStates)
-				{
-					var count = await _context.CarPlates
-								.Where(x => x.CarTypeId == type.Id && x.CarStateId == state.Id && x.IsDeleted != true)
-								.CountAsync();
-
-					report.Counts.Add(count);
-					sum += count;
-				}
-				foreach (var state in executedCarStates)
-				{
-					var count = await _context.ExecutedPlates
-								.Where(x => x.CarTypeId == type.Id && x.ExecutedCarStateId == state.Id && x.IsDeleted != true)
-								.CountAsync();
-
-					report.Counts.Add(count);
-					sum += count;
-				}
-
-				report.Counts.Add(sum);
-
-				dailyReportDto.Add(report);
-			}
-
-
-
-			// last displayed row at the report showing the total for each state
-			sum = 0;
-			var totalCountsReport = new DailyReportDto
-			{
-				CarType = "الإجمالي",
-				Counts = new List<int>()
-			};
-
-			foreach (var state in carStates)
-			{
-				var count = await _context.CarPlates
-							.Where(x => x.CarStateId == state.Id && x.IsDeleted != true)
-							.CountAsync();
-
-				totalCountsReport.Counts.Add(count);
-				sum += count;
-
-				allStates.Add(state.State);
-			}
-			foreach (var state in executedCarStates)
-			{
-				var count = await _context.ExecutedPlates
-							.Where(x => x.ExecutedCarStateId == state.Id && x.IsDeleted != true)
-							.CountAsync();
-
-				totalCountsReport.Counts.Add(count);
-				sum += count;
-
-				allStates.Add(state.State);
-			}
-
-			totalCountsReport.Counts.Add(sum);
-
-			allStates.Add("الإجمالي");
-
-			dailyReportDto.Add(totalCountsReport);
-
-			return Ok(new
-			{
-				carStates = allStates,
-				dailyReport = dailyReportDto,
-			});
 		}
 
 
